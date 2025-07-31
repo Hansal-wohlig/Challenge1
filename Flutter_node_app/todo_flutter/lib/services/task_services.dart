@@ -15,7 +15,7 @@ class TaskService {
     }
   }
 
-  static Future<void> addTask(String user, String title, String description) async {
+  static Future<void> addTask(String user, String title, String description, {DateTime? dueDate}) async {
     await http.post(
       Uri.parse('$baseUrl/tasks'),
       headers: {'Content-Type': 'application/json'},
@@ -23,7 +23,8 @@ class TaskService {
         'user': user,
         'title': title,
         'description': description,
-        'status': 'pending'
+        'status': 'pending',
+        if (dueDate != null) 'dueDate': dueDate.toIso8601String(),
       }),
     );
   }
@@ -32,11 +33,26 @@ class TaskService {
     await http.delete(Uri.parse('$baseUrl/tasks/$id'));
   }
 
-  static Future<void> updateTaskStatus(String id, String status) async {
+  static Future<void> updateTaskStatus(String id, String status, {DateTime? dueDate}) async {
+    final body = {'status': status};
+    if (dueDate != null) body['dueDate'] = dueDate.toIso8601String();
     await http.put(
       Uri.parse('$baseUrl/tasks/$id'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'status': status}),
+      body: jsonEncode(body),
+    );
+  }
+
+  static Future<void> updateTask(String id, String title, String description, {DateTime? dueDate}) async {
+    final body = {
+      'title': title,
+      'description': description,
+    };
+    if (dueDate != null) body['dueDate'] = dueDate.toIso8601String();
+    await http.put(
+      Uri.parse('$baseUrl/tasks/$id'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
     );
   }
 }

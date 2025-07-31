@@ -3,8 +3,8 @@ const Task = require("../models/Task");
 // Create a task
 exports.createTask = async (req, res) => {
   try {
-    const { user, title, description, status } = req.body;
-    const newTask = new Task({ user, title, description, status });
+    const { user, title, description, status, dueDate } = req.body;
+    const newTask = new Task({ user, title, description, status, dueDate });
     const savedTask = await newTask.save();
     res.status(201).json(savedTask);
   } catch (err) {
@@ -27,7 +27,13 @@ exports.getTasks = async (req, res) => {
 exports.updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedTask = await Task.findByIdAndUpdate(id, req.body, { new: true });
+    const { title, description, status, dueDate } = req.body;
+    const updateFields = { };
+    if (title !== undefined) updateFields.title = title;
+    if (description !== undefined) updateFields.description = description;
+    if (status !== undefined) updateFields.status = status;
+    if (dueDate !== undefined) updateFields.dueDate = dueDate;
+    const updatedTask = await Task.findByIdAndUpdate(id, updateFields, { new: true });
     res.json(updatedTask);
   } catch (err) {
     res.status(500).json({ error: err.message });
