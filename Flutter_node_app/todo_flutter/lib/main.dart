@@ -11,6 +11,7 @@ class ToDoApp extends StatelessWidget {
     return MaterialApp(
       title: 'ToDo App',
       theme: ThemeData(primarySwatch: Colors.blue),
+      debugShowCheckedModeBanner: false,
       home: TaskPage(),
     );
   }
